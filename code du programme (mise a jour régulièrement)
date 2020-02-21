@@ -1,0 +1,52 @@
+# J'importe une librairie qui me permet de faire du traitement de texte
+import re
+
+# J'importe le fichier 'liste_de_mot.txt' dans la variable words_list, ici, à la place, il faut que tu mettes le chemin
+# de ton fichier, il doit être dans le même dossier que le fichier du code
+with open('stopwordsEnglish.txt') as words_list:
+
+    # J'importe le fichier 'texte.txt' dans la variable 'text'
+	with open('plot_summaries.txt') as text:
+
+        # Je stocke dans 'text_result' en format STRING le fichier "texte.txt" que j'ai stocké dans la variable text.
+		text_result = text.read()
+
+        # Je stocke dans words_list_str en format LIST le fichier "liste_de_mot.txt" que j'ai stocké dans la variable
+        # words_list, je précise que les mots sont séparés par l'élément '\n' qui correspond au saut de ligne
+        # ainsi, ma liste stockée dans words_list_str ressemblera à ça [the, and, of, etc...]
+		words_list_str = words_list.read().split('\n')
+
+        # Je parcours chaque mot de la liste words_list_str
+      
+		for elt in words_list_str:
+
+            # J'utilise la fonction re.sub de la librairie re
+            # Elle permet de remplacer un élément défini par mes soins par un autre élément (ici '' qui correspond à un
+            # élément vide, donc équivaut à une suppression) au sein d'une chaîne de caractères.
+            # J'ai défini l'élément à remplacer à l'aide du code r"\b%s\b" % elt.capitalize()
+            # Traduction du code : je cherche dans text_result toutes les instances qui sont des mots isolés et qui
+            # correspondent à "elt" (qui est en réalité un mot de la "liste words_list_str")
+            # je le remplace par '', c'est à dire du vide, ce qui équivaut à une suppression.
+            # Je répète l'opération 3 fois car l'élément "the" par exemple, peut être écrit sous différentes
+            # formes telles que "The" (capitalize), "the" (lower) ou encore "THE" (upper)
+			text_result = re.sub(r"\b%s\b" % elt.capitalize(), '', text_result)
+			text_result = re.sub(r"\b%s\b" % elt.lower(), '', text_result)
+			text_result = re.sub(r"\b%s\b" % elt.upper(), '', text_result)
+			
+		with open('new_text.txt', 'w') as new_text:
+			new_text.write(text_result)
+			
+	with open('new_text.txt', 'r') as f:
+	#je crée un dictionnaire la cle est l'identifiant du film et la valeur est un tableau de str contenant tout les mots du resumé 
+		dico = dict()
+		# f.realine permet de lire ligne par ligne le fichier donnée en argument on sait qu'une ligne est un resumé  d'un film 
+		for i in f.readlines():
+		#la fonction split permet de transformer une chaine de caraatere en liste jusqu'a qu'on tombe sur une tabulation ce qui correspond a un nouvel identifiant 
+			test = i.split("\t")
+			pid = test[0] #id
+			#le premier mot correspond à l'identifiant 
+			text = test[1].split() 
+			# on transforme la chaine de caractere en liste de mot 
+			dico[pid] = text 
+			
+		print(dico['2231378'][0])
